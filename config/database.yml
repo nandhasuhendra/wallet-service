@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("POSTGRESQL_HOST") %>
+  port: <%= ENV.fetch("POSTGRESQL_PORT") %>
+  username: <%= ENV.fetch("POSTGRESQL_USERNAME") %>
+  password: <%= ENV.fetch("POSTGRESQL_PASSWORD") %>
+
+development:
+  <<: *default
+  database: wallet_service_development
+
+test:
+  <<: *default
+  database: wallet_service_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: wallet_service_production
+  cache:
+    <<: *primary_production
+    database: wallet_service_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: wallet_service_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: wallet_service_production_cable
+    migrations_paths: db/cable_migrate
