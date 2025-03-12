@@ -1,5 +1,7 @@
 class ApplicationController < ActionController::API
   include ErrorException
+  include Authentication
+
   if ENV["DISABLE_QUERY_CACHE"] == 'true'
     around_action :disable_query_cache
 
