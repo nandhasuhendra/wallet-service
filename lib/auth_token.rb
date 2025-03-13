@@ -1,27 +1,25 @@
 class AuthToken
-  def initialize
-    @key = Rails.application.credentials.encryption_key
-    @openssl = OpenSSL::Cipher.new("aes-256-cbc")
+  SECRET_KEY = Rails.application.credentials.secret_key_base
+
+  def self.encode(payload, exp = 1.hour.from_now.to_i)
+    payload[:exp] = exp
+    header = Base64.urlsafe_encode64({ alg: "HS256", typ: "JWT" }.to_json)
+    payload_encoded = Base64.urlsafe_encode64(payload.to_json)
+    signature = Base64.urlsafe_encode64(OpenSSL::HMAC.digest("SHA256", SECRET_KEY, "#{header}.#{payload_encoded}"))
+
+    "#{header}.#{payload_encoded}.#{signature}"
   end
 
-  def encode(payload)
-    payload[:exp] = 24.hours.from_now.to_i
-    @openssl.encrypt
-    @openssl.key = @key
-    @openssl.iv = iv = @openssl.random_iv
-    encrypted = @openssl.update(payload.to_json) + @openssl.final
-    Base64.encode64(iv + encrypted)
-  end
+  def self.decode(token)
+    header, payload_encoded, signature = token.split(".")
+    expected_signature = Base64.urlsafe_encode64(OpenSSL::HMAC.digest("SHA256", SECRET_KEY, "#{header}.#{payload_encoded}"))
 
-  def decode(token)
-    data = Base64.decode64(token)
-    @openssl.decrypt
-    @openssl.key = @key
-    @openssl.iv = data.slice!(0, 16)
+    return nil unless ActiveSupport::SecurityUtils.secure_compare(expected_signature, signature)
 
-    result = JSON.parse(@openssl.update(data) + @openssl.final)
-    return nil if result["exp"] < Time.now.to_i
+    payload = JSON.parse(Base64.urlsafe_decode64(payload_encoded), symbolize_names: true)
+    return nil if Time.now.to_i > payload[:exp]
 
-    result
+    payload
   end
 end
+

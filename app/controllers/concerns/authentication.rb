@@ -11,7 +11,7 @@ module Authentication
 
   def authenticate_request
     token = request.headers["Authorization"]&.split(" ")&.last
-    decoded_token = AuthToken.new.decode(token)
+    decoded_token = AuthToken.decode(token)
 
     if !decoded_token
       render json: { error: I18n.t("api.error_messages.invalid_token") }, status: :unauthorized
