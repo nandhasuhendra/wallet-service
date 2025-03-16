@@ -16,17 +16,23 @@
 #
 
 class Team < ApplicationRecord
-  belongs_to :creator, class_name: 'User', foreign_key: :creator_id
+  belongs_to :creator, class_name: "User", foreign_key: :creator_id
 
   has_many :memberships, dependent: :destroy
-  has_many :members, through: :memberships, class_name: 'User', source: :user
+  has_many :members, through: :memberships, class_name: "User", source: :user
 
   validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :deleted_at }
   validate :cannot_invite_deleted_user, on: :update
 
+  before_create :set_creator_as_member
+
   private
 
   def cannot_invite_deleted_user
-    errors.add(:members, 'cannot invite deleted user') if members.any?(&:deleted_at)
+    errors.add(:members, "cannot invite deleted user") if members.any?(&:deleted_at)
+  end
+
+  def set_creator_as_member
+    self.members << creator
   end
 end
