@@ -17,4 +17,12 @@
 class Membership < ActiveRecord::Base
   belongs_to :team
   belongs_to :user
+
+  before_destroy :cannot_remove_creator
+
+  private
+
+  def cannot_remove_creator
+    raise "cannot remove creator" if user == team.creator
+  end
 end
