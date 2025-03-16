@@ -11,3 +11,12 @@
       u.password_confirmation = user[:password_confirmation]
     end
   end
+
+[
+  { name: "Team A", creator: 'Alice', members: %w[Bob] },
+  { name: "Team B", creator: 'Charlie', members: %w[David Eve] }
+].each do |team|
+    Team.find_or_create_by!(name: team[:name], creator: User.find_by(name: team[:creator])) do |t|
+      t.members = User.where(name: team[:members])
+    end
+end

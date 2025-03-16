@@ -18,6 +18,10 @@
 class User < ApplicationRecord
   has_secure_password
 
+  has_many :memberships, dependent: :destroy
+  has_many :teams, through: :memberships
+  has_many :created_teams, class_name: 'Team', foreign_key: :creator_id
+
   validates :name, :email, presence: true
   validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }
 end
