@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
       resource :user, only: %I[show], controller: :user
       resources :teams do
-        resources :memberships, only: %I[index destroy]
+        resources :members, only: %I[index destroy], controller: "teams/memberships"
       end
     end
   end
