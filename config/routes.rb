@@ -13,6 +13,9 @@ Rails.application.routes.draw do
       post :login, to: "session#create"
 
       resource :user, only: %I[show], controller: :user
+      resources :teams do
+        resources :memberships, only: %I[index destroy]
+      end
     end
   end
 end
