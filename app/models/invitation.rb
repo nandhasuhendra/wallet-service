@@ -20,16 +20,19 @@
 
 class Invitation < ApplicationRecord
   belongs_to :team
+  belongs_to :sender, class_name: "User", foreign_key: "sender_id"
+  belongs_to :recipient, class_name: "User", foreign_key: "recipient_id"
 
-  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :invitation_token, presence: true, uniqueness: true
+  validates :cannot_invite_unregistered_user
+  validates :cannot_invite_yourself
 
   before_validation :generate_invitation_token, on: :create
   befor_create :set_expired_at
 
   def accept!(user)
-    raise 'invitation already accepted' if accepted_at.present?
-    raise 'invitation expired' if expired_at < time.current
+    raise "invitation already accepted" if accepted_at.present?
+    raise "invitation expired" if expired_at < time.current
 
     ActiveRecord::Base.transaction do
       team.members << user
@@ -45,5 +48,13 @@ class Invitation < ApplicationRecord
 
   def set_expired_at
     self.expired_at = 1.week.from_now
+  end
+
+  def cannot_invite_yourself
+    errors.add(:email, "cannot invite yourself") if recipient.email == team.creator.email
+  end
+
+  def cannot_invite_unregistered_user
+    errors.add(:email, "cannot invite unregistered user") unless User.find_by(id: recipient_id)
   end
 end
