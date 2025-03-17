@@ -20,6 +20,7 @@ class Team < ApplicationRecord
 
   has_many :memberships, dependent: :destroy
   has_many :members, through: :memberships, class_name: "User", source: :user
+  has_many :invitations, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :deleted_at }
   validate :cannot_invite_deleted_user, on: :update
