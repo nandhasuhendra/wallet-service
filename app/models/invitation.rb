@@ -43,7 +43,9 @@ class Invitation < ApplicationRecord
   private
 
   def generate_invitation_token
-    self.invitation_token = SecureRandom.hex(16)
+    while Invitation.exists?(invitation_token: invitation_token)
+      self.invitation_token = SecureRandom.hex(16)
+    end
   end
 
   def set_expired_at
