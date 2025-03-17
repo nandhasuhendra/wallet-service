@@ -15,6 +15,12 @@ Rails.application.routes.draw do
       resource :user, only: %I[show], controller: :user
       resources :teams do
         resources :members, only: %I[index destroy], controller: "teams/memberships"
+
+        resources :invitations, only: %i[index create destroy] do
+          collection do
+            get :accept, to: "invitations#accept"
+          end
+        end
       end
     end
   end
