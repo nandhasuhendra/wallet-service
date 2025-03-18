@@ -1,7 +1,3 @@
-TransactionCategory::TRANSACTION_TYPE_ID_CONST_MAP.each do |id, name|
-  TransactionCategory.find_or_create_by(id: id, name: name)
-end
-
 if ENV["CREATE_DUMMY_DATA"] == "true"
   [
     { name: "Alice", email: "alice@email.com", password: "password", password_confirmation: "password" },

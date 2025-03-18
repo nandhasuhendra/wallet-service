@@ -6,16 +6,16 @@ class CreateTransactions < ActiveRecord::Migration[8.0]
       t.integer :status, null: false, default: 0
       t.decimal :credit, precision: 10, scale: 2, default: 0.0, null: false
       t.decimal :debit, precision: 10, scale: 2, default: 0.0, null: false
+      t.string :type, null: false
       t.references :source, polymorphic: true, null: false
       t.references :target, polymorphic: true, null: true
       t.references :wallet, null: false, foreign_key: true
-      t.references :category, null: false, foreign_key: { to_table: :transaction_categories }
       
       t.timestamps
     end
 
-    add_index :transactions, %i[wallet_id status], unique: true
-    add_index :transactions, %i[source_id source_type wallet_id status], unique: true
-    add_index :transactions, %i[source_id source_type target_id target_type wallet_id status], unique: true
+    add_index :transactions, %i[type wallet_id status], unique: true
+    add_index :transactions, %i[type source_id source_type wallet_id status], unique: true
+    add_index :transactions, %i[type source_id source_type target_id target_type wallet_id status], unique: true
   end
 end
