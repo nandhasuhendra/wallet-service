@@ -4,18 +4,21 @@
 #
 #  id               :integer          not null, primary key
 #  invitation_token :string           not null
-#  email            :string           not null
 #  accepted_at      :datetime
 #  expired_at       :datetime
+#  sender_id        :integer          not null
+#  recipient_id     :integer          not null
 #  team_id          :integer          not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #
 # Indexes
 #
-#  index_invitations_on_email_and_team_id  (email,team_id) UNIQUE
-#  index_invitations_on_invitation_token   (invitation_token) UNIQUE
-#  index_invitations_on_team_id            (team_id)
+#  index_invitations_on_invitation_token                        (invitation_token) UNIQUE
+#  index_invitations_on_recipient_id                            (recipient_id)
+#  index_invitations_on_sender_id                               (sender_id)
+#  index_invitations_on_team_id                                 (team_id)
+#  index_invitations_on_team_id_and_sender_id_and_recipient_id  (team_id,sender_id,recipient_id) UNIQUE
 #
 
 class Invitation < ApplicationRecord
