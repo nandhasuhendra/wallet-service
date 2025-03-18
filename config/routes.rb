@@ -14,11 +14,13 @@ Rails.application.routes.draw do
 
       resource :user, only: %I[show], controller: :user do
         resources :wallets, only: %I[index show create update destroy]
+        resources :transactions, only: %I[index show create update]
       end
 
       resources :teams do
         resources :members, only: %I[index destroy], controller: "teams/memberships"
         resource :wallet, only: %I[show], controller: "teams/wallets"
+        resources :transactions, only: %I[index show create update]
 
         resources :invitations, only: %i[index create destroy] do
           collection do
