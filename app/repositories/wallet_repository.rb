@@ -24,5 +24,15 @@ class WalletRepository
     def find_by_id_and_lock(wallet_id, owner)
       Wallet.where(id: wallet_id, owner: owner).lock("FOR UPDATE").last
     end
+
+    def adjust_balance!(wallet_id, amount)
+      wallet = Wallet.find(wallet_id)
+      wallet.with_lock! do
+        new_balance = balance + amount
+        raise ActiveRecord::Rollback, "Insufficient funds" if new_balance < 0
+
+        wallet.update!(balance: new_balance)
+      end
+    end
   end
 end
