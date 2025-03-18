@@ -9,14 +9,15 @@ module Transactions
 
     attr_reader :lock_service
 
-    def initialize(source_transaction_id:, target_transaction_id:, lock_service: RedisLockService::Lock.new)
+    def initialize(source_transaction_id:, target_transaction_id:, type: nil, lock_service: RedisLockService::Lock.new)
       @source_transaction_id = source_transaction_id
       @target_transaction_id = target_transaction_id
+      @type                  = type
       @lock_service          = lock_service
     end
 
     def call
-      return unless transaction.pending?
+      raise Error, "invalid transaction type" if type.blank?
       raise MissingSourceTransactionError if source_transaction.blank?
 
       wallets = [source_transaction.wallet_id, target_transaction.try(:wallet_id)].compact
@@ -50,7 +51,7 @@ module Transactions
     end
 
     def processor_service_class
-      class_name = "Transactions::Processors::#{type.to_s.camelize}Service".constantize
+      class_name = "Transactions::Processors::#{@type.to_s.camelize}Service".constantize
     end
   end
 end
