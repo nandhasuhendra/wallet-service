@@ -4,13 +4,8 @@ module API
       module Transactions
         class DepositController < ApplicationController
           def create
-            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user, type: :deposit)
-            unless @transaction.success?
-              render json: { errors: @transaction.errors }, status: :unprocessable_entity
-              return
-            end
-
-            render :show, status: :created
+            ::Transactions::CreateTransactionWorker.perform_async(current_user, :deposit, transaction_params)
+            head :created
           end
 
           private

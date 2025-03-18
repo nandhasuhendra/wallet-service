@@ -6,13 +6,8 @@ module API
           include TeamConcern
 
           def create
-            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_team, type: :payment)
-            unless @transaction.success?
-              render json: { errors: @transaction.errors }, status: :unprocessable_entity
-              return
-            end
-
-            render :show, status: :created
+            ::Transactions::CreateTransactionWorker.perform_async(current_team, :payment, transaction_params)
+            head :created
           end
 
           private

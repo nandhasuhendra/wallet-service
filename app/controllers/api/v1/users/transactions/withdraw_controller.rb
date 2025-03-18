@@ -4,13 +4,8 @@ module API
       module Transactions
         class WithdrawController < ApplicationController
           def create
-            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user, type: :withdraw)
-            unless @transaction.success?
-              render json: { errors: @transaction.errors }, status: :unprocessable_entity
-              return
-            end
-
-            render :show, status: :created
+            ::Transactions::CreateTransactionWorker.perform_async(current_user, :withdraw, transaction_params)
+            head :created
           end
 
           private
