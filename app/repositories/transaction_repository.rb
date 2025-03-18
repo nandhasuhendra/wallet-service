@@ -4,8 +4,8 @@ class TransactionRepository
       Transaction.where(wallet_id: wallet_id).order(created_at: :desc)
     end
 
-    def find_by_id_and_lock(id)
-      Transaction.where(id: id).lock("FOR UPDATE").last
+    def find_by_id_with_lock(id)
+      Transaction.lock("FOR UPDATE").find(id)
     end
   end
 end
