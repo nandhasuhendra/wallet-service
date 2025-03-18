@@ -1,7 +1,7 @@
 module API
   module V1
     module Teams
-      class WalletsController < API::V1::ApplicationController
+      class WalletsController < ApplicationController
         def show
           wallet = WalletRepository.find_by_id_and_owner(params[:id], current_team)
           if @wallet

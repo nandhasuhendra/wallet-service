@@ -1,7 +1,7 @@
 module API
   module V1
     module Users
-      class WalletsController < API::V1::ApplicationController
+      class WalletsController < ApplicationController
         def index
           @wallets = WalletRepository.owner_wallets(current_user)
         end
