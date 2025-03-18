@@ -12,6 +12,6 @@ class CreateInvitations < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :invitations, %i[team_id receive_id], unique: true
+    add_index :invitations, %i[team_id sender_id recipient_id], unique: true
   end
 end

@@ -16,14 +16,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
 
   create_table "invitations", force: :cascade do |t|
     t.string "invitation_token", null: false
-    t.string "email", null: false
     t.datetime "accepted_at"
     t.datetime "expired_at"
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
     t.bigint "team_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email", "team_id"], name: "index_invitations_on_email_and_team_id", unique: true
     t.index ["invitation_token"], name: "index_invitations_on_invitation_token", unique: true
+    t.index ["recipient_id"], name: "index_invitations_on_recipient_id"
+    t.index ["sender_id"], name: "index_invitations_on_sender_id"
+    t.index ["team_id", "sender_id", "recipient_id"], name: "index_invitations_on_team_id_and_sender_id_and_recipient_id", unique: true
     t.index ["team_id"], name: "index_invitations_on_team_id"
   end
 
@@ -82,6 +85,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
 
   create_table "wallets", force: :cascade do |t|
     t.string "name", null: false
+    t.boolean "primary", default: false, null: false
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.string "owner_type", null: false
     t.bigint "owner_id", null: false
@@ -94,6 +98,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
   end
 
   add_foreign_key "invitations", "teams"
+  add_foreign_key "invitations", "users", column: "recipient_id"
+  add_foreign_key "invitations", "users", column: "sender_id"
   add_foreign_key "memberships", "teams"
   add_foreign_key "memberships", "users"
   add_foreign_key "teams", "users", column: "creator_id"
