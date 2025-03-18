@@ -21,11 +21,13 @@ class Team < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :members, through: :memberships, class_name: "User", source: :user
   has_many :invitations, dependent: :destroy
+  has_one :wallet, as: :owner, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :deleted_at }
   validate :cannot_invite_deleted_user, on: :update
 
   before_create :set_creator_as_member
+  before_commit :publish_creation_event, on: :create
 
   private
 
@@ -35,5 +37,9 @@ class Team < ApplicationRecord
 
   def set_creator_as_member
     self.members << creator
+  end
+
+  def publish_creation_event
+    ActiveSupport::Notifications.instrument("teams.creation", team: self)
   end
 end
