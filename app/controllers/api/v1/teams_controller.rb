@@ -1,6 +1,8 @@
 module API
   module V1
     class TeamsController < ApplicationController
+      include TeamConcern
+
       def create
         team = ::Teams::CreateService.call(params: team_params, user: current_user)
         unless team.success?
@@ -13,7 +15,7 @@ module API
       end
 
       def show
-        @team = Team.find(params[:id])
+        @team = current_team
       end
 
       def update

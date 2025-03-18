@@ -7,6 +7,13 @@ module API
         end
 
         def create
+          @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user)
+          unless @transaction.success?
+            render json: { errors: @transaction.errors }, status: :unprocessable_entity
+            return
+          end
+
+          render :show, status: :created
         end
 
         def show
@@ -26,7 +33,7 @@ module API
         private
 
         def transaction_params
-          params.require(:transaction).permit(:target, :amount, :category, :description)
+          params.require(:transaction).permit(:target, :amount, :description)
         end
       end
     end
