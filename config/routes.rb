@@ -7,4 +7,25 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  namespace :api do
+    namespace :v1 do
+      post :login, to: "session#create"
+
+      resource :user, only: %I[show], controller: :user do
+        resources :wallets, only: %I[index show create update destroy]
+      end
+
+      resources :teams do
+        resources :members, only: %I[index destroy], controller: "teams/memberships"
+        resource :wallet, only: %I[show], controller: "teams/wallets"
+
+        resources :invitations, only: %i[index create destroy] do
+          collection do
+            get :accept, to: "invitations#accept"
+          end
+        end
+      end
+    end
+  end
 end
