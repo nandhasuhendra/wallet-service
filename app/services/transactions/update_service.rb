@@ -7,7 +7,7 @@ module Transactions
     end
 
     def call
-      transaction = TransactionRepository.find_by_id_and_lock(@id)
+      transaction = TransactionRepository.find_by_id_with_lock(@id)
       return handler_success(transaction) if transaction.update(description: @description)
 
       handler_failure(transaction.errors)
