@@ -10,6 +10,10 @@ class Transaction < ApplicationRecord
 
   after_commit :publish_transaction
 
+  def fail!
+    update!(status: :failed)
+  end
+
   private
 
   def publish_transaction
