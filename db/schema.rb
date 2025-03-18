@@ -62,13 +62,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
     t.decimal "debit", precision: 10, scale: 2, default: "0.0", null: false
     t.string "source_type", null: false
     t.bigint "source_id", null: false
+    t.string "target_type"
+    t.bigint "target_id"
     t.bigint "wallet_id", null: false
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["source_id", "source_type", "target_id", "target_type", "wallet_id", "status"], name: "idx_on_source_id_source_type_target_id_target_type__8b003312c5", unique: true
     t.index ["source_id", "source_type", "wallet_id", "status"], name: "idx_on_source_id_source_type_wallet_id_status_2dd9f6e983", unique: true
     t.index ["source_type", "source_id"], name: "index_transactions_on_source"
+    t.index ["target_type", "target_id"], name: "index_transactions_on_target"
     t.index ["wallet_id", "status"], name: "index_transactions_on_wallet_id_and_status", unique: true
     t.index ["wallet_id"], name: "index_transactions_on_wallet_id"
   end
