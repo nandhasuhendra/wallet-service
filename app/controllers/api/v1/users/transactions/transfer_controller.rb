@@ -4,8 +4,13 @@ module API
       module Transactions
         class TransferController < ApplicationController
           def create
-            ::Transactions::CreateTransactionWorker.perform_async(current_user, :transfer, transaction_params)
-            head :created
+            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user, type: :transfer)
+            unless @transaction.success?
+              render json: { errors: @transaction.errors }, status: :unprocessable_entity
+              return
+            end
+
+            render :show, status: :created
           end
 
           private

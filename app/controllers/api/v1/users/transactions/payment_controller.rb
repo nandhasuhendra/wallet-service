@@ -4,8 +4,13 @@ module API
       module Transactions
         class PaymentController < ApplicationController
           def create
-            ::Transactions::CreateTransactionWorker.perform_async(current_user, :payment, transaction_params)
-            head :created
+            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user, type: :payment)
+            unless @transaction.success?
+              render json: { errors: @transaction.errors }, status: :unprocessable_entity
+              return
+            end
+
+            render :show, status: :created
           end
 
           private
