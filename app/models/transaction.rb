@@ -5,6 +5,7 @@ class Transaction < ApplicationRecord
 
   validates :status, :source, :wallet, :category, presence: true
   validate :source_and_target_must_be_different
+  validate :transaction_category
 
   after_commit :publish_transaction
 
@@ -14,6 +15,10 @@ class Transaction < ApplicationRecord
     return unless target.blank?
 
     errors.add(:target, "must be different from source") if source == target
+  end
+
+  def transaction_category
+    errors.add(:category, "must be a valid transaction category") unless category.valid_transaction?
   end
 
   def publish_transaction

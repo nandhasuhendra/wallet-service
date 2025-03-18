@@ -17,4 +17,8 @@ class TransactionCategory < ApplicationRecord
 
   has_many :transactions
   validates :name, presence: true, uniqueness: true
+
+  def valid_transaction?
+    name.in? TRANSACTION_TYPE_ID_CONST_MAP.values
+  end
 end
