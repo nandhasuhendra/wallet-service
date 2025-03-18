@@ -7,7 +7,7 @@ module Wallets
     end
 
     def call
-      Wallet.create!(name: ::Wallet::DEFAULT_WALLET_NAME, owner: owner, balance: 0, primary: true)
+      WalletRepository.create_default_wallet(owner)
     end
   end
 end
