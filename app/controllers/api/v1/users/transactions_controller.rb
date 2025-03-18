@@ -14,6 +14,19 @@ module API
         end
 
         def update
+          @transaction = ::Transactions::UpdateService.call(id: params[:id], description: transaction_params[:description], source: current_user)
+          unless @transaction.success?
+            render json: { errors: @transaction.errors }, status: :unprocessable_entity
+            return
+          end
+
+          render :show, status: :ok
+        end
+
+        private
+
+        def transaction_params
+          params.require(:transaction).permit(:target, :amount, :category, :description)
         end
       end
     end
