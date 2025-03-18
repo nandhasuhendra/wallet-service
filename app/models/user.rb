@@ -16,11 +16,13 @@
 #
 
 class User < ApplicationRecord
+  include TransactionHelper
+
   has_secure_password
 
   has_many :memberships, dependent: :destroy
   has_many :teams, through: :memberships
-  has_many :created_teams, class_name: 'Team', foreign_key: :creator_id
+  has_many :created_teams, class_name: "Team", foreign_key: :creator_id
   has_many :wallets, as: :owner, dependent: :destroy
 
   validates :name, :email, presence: true

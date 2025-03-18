@@ -1,7 +1,10 @@
 class Transaction < ApplicationRecord
   belongs_to :category, class_name: "TransactionCategory", foreign_key: "category_id"
+  belongs_to :source, polymorphic: true
+  belongs_to :target, polymorphic: true, optional: true
+  belongs_to :wallet
 
-  enum :status, { pending: 0, completed: 1, failed: 2 }, _default: :pending
+  enum :status, { pending: 0, completed: 1, failed: 2 }, default: :pending
 
   validates :status, :source, :wallet, :category, presence: true
   validate :source_and_target_must_be_different
