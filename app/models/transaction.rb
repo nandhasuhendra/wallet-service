@@ -25,12 +25,6 @@ class Transaction < ApplicationRecord
   end
 
   def publish_transaction
-    if pending?
-      ActiveSupport::Notifications.instrument("transactions.pending", transaction: self)
-    elsif completed?
-      ActiveSupport::Notifications.instrument("transactions.completed", transaction: self)
-    elsif failed?
-      ActiveSupport::Notifications.instrument("transactions.failed", transaction: self)
-    end
+    ActiveSupport::Notifications.instrument("transactions.#{self.status}", transaction: self)
   end
 end
