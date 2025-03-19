@@ -13,6 +13,10 @@ class Transaction < ApplicationRecord
     update!(status: :failed)
   end
 
+  def set_amount(amount)
+    raise NotImplementedError, "You must implement #{self.class}##{__method__}"
+  end
+
   private
 
   def publish_transaction
