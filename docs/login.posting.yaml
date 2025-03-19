@@ -1,0 +1,15 @@
+name: Login
+method: POST
+url: $BASE_URL/api/v1/login
+body:
+  content: |-
+    {
+      "email": "alice@email.com",
+      "password": "password"
+    }
+  content_type: application/json
+headers:
+- name: Content-Type
+  value: application/json
+- name: Accept
+  value: application/json
