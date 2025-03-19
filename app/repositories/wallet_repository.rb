@@ -25,6 +25,14 @@ class WalletRepository
       Wallet.where(id: wallet_id, owner: owner).lock("FOR UPDATE").last
     end
 
+    def find_by_number(wallet_number)
+      Wallet.find_by(number: wallet_number)
+    end
+
+    def find_by_number_and_lock(wallet_number)
+      Wallet.lock("FOR UPDATE").find_by(number: wallet_number)
+    end
+
     def adjust_balance!(wallet_id, amount)
       wallet = Wallet.find(wallet_id)
       wallet.with_lock! do
