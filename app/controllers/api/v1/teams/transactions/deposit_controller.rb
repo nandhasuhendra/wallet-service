@@ -6,7 +6,7 @@ module API
           include TeamConcern
 
           def create
-            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_team, type: :deposit)
+            @transaction = ::Transactions::CreateService.call(params: transaction_params, creator: current_team, type: :deposit)
             unless @transaction.success?
               render json: { errors: @transaction.errors }, status: :unprocessable_entity
               return
@@ -18,7 +18,7 @@ module API
           private
 
           def transaction_params
-            params.require(:transaction).permit(:amount, :description)
+            params.require(:transaction).permit(:amount, :description, :source_number)
           end
         end
       end

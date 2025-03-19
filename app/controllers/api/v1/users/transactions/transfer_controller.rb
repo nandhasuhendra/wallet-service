@@ -4,7 +4,7 @@ module API
       module Transactions
         class TransferController < ApplicationController
           def create
-            @transaction = ::Transactions::CreateService.call(params: transaction_params, source: current_user, type: :transfer)
+            @transaction = ::Transactions::CreateService.call(params: transaction_params, creator: current_user, type: :transfer)
             unless @transaction.success?
               render json: { errors: @transaction.errors }, status: :unprocessable_entity
               return
@@ -16,7 +16,7 @@ module API
           private
 
           def transaction_params
-            params.require(:transaction).permit(:target_id, :target_type, :amount, :description)
+            params.require(:transaction).permit(:amount, :description, :source_number, :target_number)
           end
         end
       end
