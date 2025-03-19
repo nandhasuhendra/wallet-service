@@ -80,6 +80,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
   end
 
   create_table "wallets", force: :cascade do |t|
+    t.string "number", null: false
     t.string "name", null: false
     t.boolean "primary", default: false, null: false
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
@@ -89,6 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name", "deleted_at"], name: "index_wallets_on_name_and_deleted_at", unique: true
+    t.index ["number"], name: "index_wallets_on_number"
     t.index ["owner_id", "owner_type", "deleted_at"], name: "index_wallets_on_owner_id_and_owner_type_and_deleted_at", unique: true
     t.index ["owner_type", "owner_id"], name: "index_wallets_on_owner"
   end
