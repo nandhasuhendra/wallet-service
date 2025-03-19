@@ -55,19 +55,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
     t.decimal "credit", precision: 10, scale: 2, default: "0.0", null: false
     t.decimal "debit", precision: 10, scale: 2, default: "0.0", null: false
     t.string "type", null: false
-    t.string "source_type", null: false
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
     t.bigint "source_id", null: false
-    t.string "target_type"
     t.bigint "target_id"
-    t.bigint "wallet_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["source_type", "source_id"], name: "index_transactions_on_source"
-    t.index ["target_type", "target_id"], name: "index_transactions_on_target"
-    t.index ["type", "source_id", "source_type", "target_id", "target_type", "wallet_id", "status"], name: "idx_on_type_source_id_source_type_target_id_target__b04d3dec2e", unique: true
-    t.index ["type", "source_id", "source_type", "wallet_id", "status"], name: "idx_on_type_source_id_source_type_wallet_id_status_61b0e3cf46", unique: true
-    t.index ["type", "wallet_id", "status"], name: "index_transactions_on_type_and_wallet_id_and_status", unique: true
-    t.index ["wallet_id"], name: "index_transactions_on_wallet_id"
+    t.index ["creator_type", "creator_id"], name: "index_transactions_on_creator"
+    t.index ["source_id"], name: "index_transactions_on_source_id"
+    t.index ["target_id"], name: "index_transactions_on_target_id"
+    t.index ["type", "creator_id", "creator_type"], name: "index_transactions_on_type_and_creator_id_and_creator_type", unique: true
+    t.index ["type", "source_id", "status"], name: "index_transactions_on_type_and_source_id_and_status", unique: true
+    t.index ["type", "source_id", "target_id", "status"], name: "idx_on_type_source_id_target_id_status_cb7a85c15c", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -100,5 +99,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
   add_foreign_key "memberships", "teams"
   add_foreign_key "memberships", "users"
   add_foreign_key "teams", "users", column: "creator_id"
-  add_foreign_key "transactions", "wallets"
+  add_foreign_key "transactions", "wallets", column: "source_id"
+  add_foreign_key "transactions", "wallets", column: "target_id"
 end
