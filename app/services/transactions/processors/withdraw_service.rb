@@ -1,12 +1,17 @@
 module Transactions
   module Processors
     class WithdrawService < ApplicationService
-      def initialize(source_transaction:, target_transaction:)
-        @source_transaction = source_transaction
-        @target_transaction = target_transaction
+      def initialize(transaction:)
+        @transaction = transaction
       end
 
       def call
+        raise ::Transactions::Processors::ErrorSourceWalletNotFound if source_wallet.nil?
+
+        ActiveRecord::Base.transaction do
+          source_wallet.decrement!(:balance, @transaction.debit)
+          @transaction.update!(status: :completed)
+        end
       end
     end
   end
