@@ -14,11 +14,27 @@ Rails.application.routes.draw do
 
       resource :user, only: %I[show], controller: :user do
         resources :wallets, only: %I[index show create update destroy]
+        resources :transactions, only: %I[index show update] do
+          collection do
+            post :transfer, to: "transactions/transfer#create"
+            post :deposit, to: "transactions/deposit#create"
+            post :withdraw, to: "transactions/withdraw#create"
+            post :pay, to: "transactions/payment#create"
+          end
+        end
       end
 
       resources :teams do
         resources :members, only: %I[index destroy], controller: "teams/memberships"
         resource :wallet, only: %I[show], controller: "teams/wallets"
+        resources :transactions, only: %I[index show update] do
+          collection do
+            post :transfer, to: "transactions/transfer#create"
+            post :deposit, to: "transactions/deposit#create"
+            post :withdraw, to: "transactions/withdraw#create"
+            post :pay, to: "transactions/payment#create"
+          end
+        end
 
         resources :invitations, only: %i[index create destroy] do
           collection do

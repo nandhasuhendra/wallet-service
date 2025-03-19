@@ -20,8 +20,9 @@ class User < ApplicationRecord
 
   has_many :memberships, dependent: :destroy
   has_many :teams, through: :memberships
-  has_many :created_teams, class_name: 'Team', foreign_key: :creator_id
+  has_many :created_teams, class_name: "Team", foreign_key: :creator_id
   has_many :wallets, as: :owner, dependent: :destroy
+  has_many :transactions, as: :creator, dependent: :destroy
 
   validates :name, :email, presence: true
   validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }

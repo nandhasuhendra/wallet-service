@@ -49,28 +49,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
     t.index ["name", "deleted_at"], name: "index_teams_on_name_and_deleted_at", unique: true
   end
 
-  create_table "transaction_categories", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "transactions", force: :cascade do |t|
     t.string "description", null: false
     t.integer "status", default: 0, null: false
     t.decimal "credit", precision: 10, scale: 2, default: "0.0", null: false
     t.decimal "debit", precision: 10, scale: 2, default: "0.0", null: false
-    t.string "source_type", null: false
+    t.string "type", null: false
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
     t.bigint "source_id", null: false
-    t.bigint "wallet_id", null: false
-    t.bigint "category_id", null: false
+    t.bigint "target_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_transactions_on_category_id"
-    t.index ["source_id", "source_type", "wallet_id", "status"], name: "idx_on_source_id_source_type_wallet_id_status_2dd9f6e983", unique: true
-    t.index ["source_type", "source_id"], name: "index_transactions_on_source"
-    t.index ["wallet_id", "status"], name: "index_transactions_on_wallet_id_and_status", unique: true
-    t.index ["wallet_id"], name: "index_transactions_on_wallet_id"
+    t.index ["creator_type", "creator_id"], name: "index_transactions_on_creator"
+    t.index ["source_id"], name: "index_transactions_on_source_id"
+    t.index ["target_id"], name: "index_transactions_on_target_id"
+    t.index ["type", "creator_id", "creator_type"], name: "index_transactions_on_type_and_creator_id_and_creator_type", unique: true
+    t.index ["type", "source_id", "status"], name: "index_transactions_on_type_and_source_id_and_status", unique: true
+    t.index ["type", "source_id", "target_id", "status"], name: "idx_on_type_source_id_target_id_status_cb7a85c15c", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -84,6 +80,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
   end
 
   create_table "wallets", force: :cascade do |t|
+    t.string "number", null: false
     t.string "name", null: false
     t.boolean "primary", default: false, null: false
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
@@ -93,6 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name", "deleted_at"], name: "index_wallets_on_name_and_deleted_at", unique: true
+    t.index ["number"], name: "index_wallets_on_number"
     t.index ["owner_id", "owner_type", "deleted_at"], name: "index_wallets_on_owner_id_and_owner_type_and_deleted_at", unique: true
     t.index ["owner_type", "owner_id"], name: "index_wallets_on_owner"
   end
@@ -103,6 +101,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_17_013724) do
   add_foreign_key "memberships", "teams"
   add_foreign_key "memberships", "users"
   add_foreign_key "teams", "users", column: "creator_id"
-  add_foreign_key "transactions", "transaction_categories", column: "category_id"
-  add_foreign_key "transactions", "wallets"
+  add_foreign_key "transactions", "wallets", column: "source_id"
+  add_foreign_key "transactions", "wallets", column: "target_id"
 end
