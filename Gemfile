@@ -43,7 +43,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Static analysis for code smells
-  gem "reek", "~> 6.4"
+  gem "reek", "~> 6.5"
 
   gem "dotenv-rails", "~> 3.1"
 
