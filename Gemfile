@@ -52,7 +52,7 @@ group :development, :test do
 end
 
 # Agnostic pagination in plain ruby. It does it all. Better.
-gem "pagy", "~> 9.3", ">= 9.3.3"
+gem "pagy", "~> 9.4"
 
 # Use Sidekiq for background job processing
 gem 'sidekiq', '~> 7.3', '>= 7.3.9'
